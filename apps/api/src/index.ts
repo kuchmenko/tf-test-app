@@ -1,6 +1,5 @@
 import { Context, Hono, Next } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { getConnInfo } from "@hono/node-server/conninfo";
 import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
@@ -23,21 +22,17 @@ const httpLogger = async (c: Context, next: Next) => {
   const { method, url } = c.req;
   const logger = c.get("logger");
   const geo = env.isTest ? null : getGeo(c);
-  const connInfo = env.isTest ? null : getConnInfo(c);
   const path = url.slice(url.indexOf("/", 8));
   const geoCode = geo?.countryCode ?? "unknown";
-  const conn = connInfo?.remote?.address ?? "unknown";
 
-  const out = ["START", method, path, "", geoCode, conn]
-    .filter(Boolean)
-    .join(" ");
+  const out = ["START", method, path, "", geoCode].filter(Boolean).join(" ");
   logger.info(out);
   const start = process.hrtime.bigint();
   await next();
   const end = process.hrtime.bigint();
 
   const elapsed = nanoToHuman(end - start);
-  const out2 = ["END", method, path, c.res.status, elapsed, geoCode, conn]
+  const out2 = ["END", method, path, c.res.status, elapsed, geoCode]
     .filter(Boolean)
     .join(" ");
   logger[statusToLevel(c.res.status)](out2);
@@ -60,7 +55,9 @@ app.use(requestId());
 app.use(cors());
 app.use(secureHeaders());
 app.use(loggerAttach);
-app.use(httpLogger);
+if (!env.isTest) {
+  app.use(httpLogger);
+}
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -70,7 +67,9 @@ app.route("/users", users);
 
 app.onError((err, c: Context) => {
   if (err instanceof HTTPException) {
-    c.get("logger").error("Unhandled error occurred", err);
+    if (err.status >= 500) {
+      c.get("logger").error("Server error occurred", err);
+    }
     return c.json({ error: err.message }, err.status);
   }
 

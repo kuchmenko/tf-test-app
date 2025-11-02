@@ -57,6 +57,7 @@ Table below lists the items on the way towards being able to deploy, further dev
 | ---------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Add API authorization                    | This API deals with users and their email addresses and therefore needs to be protected.   |
 | Add test coverage reporting              | Developers should have a convenient way to find blind spots in their test automation.      |
+| Add load testing with k6                 | Validate API can handle expected traffic and identify performance bottlenecks before production deployment. |
 | Add rate limiting                        | Protect API from abuse and ensure fair usage for all consumers in public cloud deployment. |
 | Add error monitoring & logging           | Production-grade observability for debugging issues and incident response.                 |
 | Add CI/CD pipeline                       | Automate testing and deployment process to ensure code quality and reduce manual errors.   |
