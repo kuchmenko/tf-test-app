@@ -1,0 +1,30 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun run build && bun dist/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --max-warnings 0",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --check \"src/**/*.{ts,tsx,md}\"",
+    "format:fix": "prettier --write \"src/**/*.{ts,tsx,md}\""
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "@hono/standard-validator": "^0.1.5",
+    "@repo/db": "*",
+    "arktype": "^2.1.25",
+    "hono": "^4.10.4",
+    "hono-geo-middleware": "^0.1.2",
+    "hono-rate-limiter": "^0.4.2",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
